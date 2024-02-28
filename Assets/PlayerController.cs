@@ -35,8 +35,6 @@ public class PlayerController : MonoBehaviour
 
     bool CanMoveToDir(Vector2 dir)
     {
-        //RaycastHit2D hit = Physics2D.Raycast(transform.position, dir, 1f, detectLayer);
-
         RaycastHit2D hit = Physics2D.Raycast(transform.position + (Vector3)dir * 0.5f, dir, 0.5f);
         if (!hit)
         {

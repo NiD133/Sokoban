@@ -26,6 +26,7 @@ public class Box : MonoBehaviour
         if (collision.CompareTag("Target"))
         {
             isOnTarget = true;
+            GetComponent<SpriteRenderer>().color = targetColor;
             transform.position = collision.transform.position;
         }
     }
@@ -35,6 +36,7 @@ public class Box : MonoBehaviour
         if (collision.CompareTag("Target"))
         {
             isOnTarget = false;
+            GetComponent<SpriteRenderer>().color = originColor;
         }
     }
 
