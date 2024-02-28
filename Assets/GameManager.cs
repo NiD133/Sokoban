@@ -3,11 +3,10 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    public LevelGenerator levelGenerator; // 确保在Unity编辑器中将这个引用拖拽到这里
+    public LevelGenerator levelGenerator;
 
     private void Start()
     {
-        // 确保在游戏开始时生成关卡
         StartLevel();
     }
 

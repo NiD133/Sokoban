@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class LevelGenerator : MonoBehaviour
 {
+    public GameObject mapParent;
     public GameObject wallPrefab;
     public GameObject boxPrefab;
     public GameObject targetPrefab;
@@ -25,20 +26,19 @@ public class LevelGenerator : MonoBehaviour
     public void GenerateLevel()
     {
         ClearLevel();
+        relocateCamera();
         for (int y = 0; y < levelMap.GetLength(0); y++)
         {
             for (int x = 0; x < levelMap.GetLength(1); x++)
             {
                 Vector2 position = new Vector2(x, -y); 
-                Instantiate(groundPrefab, position, Quaternion.identity).transform.position = new Vector3(x, -y, 10); // 将地面的z位置设置为10或其他更高的值，以确保它位于其他物体下方
+                Instantiate(groundPrefab, position, Quaternion.identity).transform.position = new Vector3(x, -y, 1);
                 if (levelMap[y, x] == 1) // Wall
                 {
                     Instantiate(wallPrefab, position, Quaternion.identity);
                 }
                 else if (levelMap[y, x] == 2) // Box
                 {
-                    Debug.Log($"Creating a box at position ({x}, {y})");
-                    Debug.Log($"Call stack:\n{UnityEngine.StackTraceUtility.ExtractStackTrace()}");
                     Instantiate(boxPrefab, position, Quaternion.identity);
                 }
                 else if (levelMap[y, x] == 3) // TargetPoint
@@ -53,12 +53,21 @@ public class LevelGenerator : MonoBehaviour
         }
     }
 
+    private Vector3 relocateCamera()
+    {
+        int mapHeight = levelMap.GetLength(0);
+        int mapWidth = levelMap.GetLength(1);
+        float centerX = (mapWidth - 1) / 2f;
+        float centerY = (mapHeight - 1) / 2f;
+        return Camera.main.transform.position = new Vector3(centerX, -centerY, -10);
+    }
+
     private void ClearLevel()
     {
         foreach (GameObject obj in instantiatedObjects)
         {
             Destroy(obj);
         }
-        instantiatedObjects.Clear(); // 清空列表
+        instantiatedObjects.Clear();
     }
 }

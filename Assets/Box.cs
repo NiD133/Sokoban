@@ -6,8 +6,8 @@ using UnityEngine;
 public class Box : MonoBehaviour
 {
     public Color targetColor;
-    Color originColor;
     private SpriteRenderer spriteRenderer;
+    Color originColor;
     public bool isOnTarget = false;
 
     public bool CanMoveToDir(Vector2 dir)
@@ -26,6 +26,7 @@ public class Box : MonoBehaviour
         if (collision.CompareTag("Target"))
         {
             isOnTarget = true;
+            originColor = GetComponent<SpriteRenderer>().color;
             GetComponent<SpriteRenderer>().color = targetColor;
             transform.position = collision.transform.position;
         }
