@@ -7,16 +7,9 @@ public class PlayerController : MonoBehaviour
 {
 
     Vector2 moveDir;
-    private Rigidbody2D rb;
-    private Stack<Vector2> playerPositions = new Stack<Vector2>();
     public bool pushBox = false;
     private Stack<bool> pushBoxStack = new Stack<bool>();
     private Stack<Vector2> directionStack = new Stack<Vector2>();
-
-    void Start()
-    {
-        playerPositions.Push(transform.position);
-    }
 
     void Update()
     {
@@ -44,7 +37,6 @@ public class PlayerController : MonoBehaviour
             if (CanMoveToDir(moveDir))
             {
                 Move(moveDir);
-                playerPositions.Push(transform.position);
                 pushBoxStack.Push(pushBox);
                 directionStack.Push(moveDir);
             }
@@ -81,27 +73,29 @@ public class PlayerController : MonoBehaviour
         transform.Translate(dir);
     }
 
+
     void UndoMove()
     {
-        if (playerPositions.Count > 0 && pushBoxStack.Count > 0)
+        if (directionStack.Count > 0)
         {
-            bool wasBoxPushed = pushBoxStack.Pop();
-            Vector2 previousPosition = playerPositions.Pop();
             Vector2 moveDirection = directionStack.Pop();
 
-            if (wasBoxPushed)
+            if (pushBoxStack.Count > 0)
             {
-                RaycastHit2D hit = Physics2D.Raycast(transform.position + (Vector3)moveDirection * 0.5f, moveDirection, 0.5f);
-                if (hit.collider != null && hit.collider.GetComponent<Box>())
-                {
-                    hit.collider.transform.position = previousPosition;
-                }
-            }
+                bool wasBoxPushed = pushBoxStack.Pop();
 
-            if (playerPositions.Count > 0)
-            {
-                transform.position = playerPositions.Peek();
+                if (wasBoxPushed)
+                {
+                    RaycastHit2D hit = Physics2D.Raycast(transform.position + (Vector3)moveDirection * 0.5f, moveDirection, 0.5f);
+                    if (hit.collider != null && hit.collider.GetComponent<Box>())
+                    {
+                        hit.collider.transform.Translate(-moveDirection);
+                    }
+                }
+
+
             }
+            transform.Translate(-moveDirection);
         }
     }
 
