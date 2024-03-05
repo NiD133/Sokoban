@@ -6,7 +6,6 @@ using UnityEngine;
 public class Box : MonoBehaviour
 {
     public Color targetColor;
-    private SpriteRenderer spriteRenderer;
     Color originColor;
     public bool isOnTarget = false;
 

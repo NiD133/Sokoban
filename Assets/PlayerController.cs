@@ -1,13 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
 
     Vector2 moveDir;
-    public LayerMask detectLayer;
-    private Rigidbody2D rb;
+    public bool pushBox = false;
+    private Stack<bool> pushBoxStack = new Stack<bool>();
+    private Stack<Vector2> directionStack = new Stack<Vector2>();
 
     void Update()
     {
@@ -23,11 +25,20 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
             moveDir = Vector2.down;
 
+        if (Input.GetKeyDown(KeyCode.Q))
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+
+        if (Input.GetKeyDown(KeyCode.P))
+            UndoMove();
+
+
         if (moveDir != Vector2.zero)
         {
             if (CanMoveToDir(moveDir))
             {
                 Move(moveDir);
+                pushBoxStack.Push(pushBox);
+                directionStack.Push(moveDir);
             }
         }
         moveDir= Vector2.zero;
@@ -45,7 +56,11 @@ public class PlayerController : MonoBehaviour
         {
             if (hit.collider.GetComponent<Box>() != null)
             {
-                return hit.collider.GetComponent<Box>().CanMoveToDir(dir);
+                if (hit.collider.GetComponent<Box>().CanMoveToDir(dir))
+                {
+                    pushBox = true;
+                    return true;
+                }
             }
                 
         }
@@ -56,7 +71,32 @@ public class PlayerController : MonoBehaviour
     void Move(Vector2 dir)
     {
         transform.Translate(dir);
-        //rb.MovePosition(rb.position + dir);
+    }
+
+
+    void UndoMove()
+    {
+        if (directionStack.Count > 0)
+        {
+            Vector2 moveDirection = directionStack.Pop();
+
+            if (pushBoxStack.Count > 0)
+            {
+                bool wasBoxPushed = pushBoxStack.Pop();
+
+                if (wasBoxPushed)
+                {
+                    RaycastHit2D hit = Physics2D.Raycast(transform.position + (Vector3)moveDirection * 0.5f, moveDirection, 0.5f);
+                    if (hit.collider != null && hit.collider.GetComponent<Box>())
+                    {
+                        hit.collider.transform.Translate(-moveDirection);
+                    }
+                }
+
+
+            }
+            transform.Translate(-moveDirection);
+        }
     }
 
 }
