@@ -1,7 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-// Add test
 
 public class LevelGenerator : MonoBehaviour
 {
@@ -14,7 +12,18 @@ public class LevelGenerator : MonoBehaviour
 
     private List<GameObject> instantiatedObjects = new List<GameObject>();
 
-    private int[,] levelMap = {
+    private int[,] levelMap1 = {
+        {1, 1, 1, -1, -1, -1, -1},
+        {1, 0, 1, -1, -1, -1, -1},
+        {1, 4, 1, -1, -1, -1, -1},
+        {1, 0, 1, -1, -1, -1, -1},
+        {1, 2, 1, -1, -1, -1, -1},
+        {1, 0, 1, 1, 1, 1, 1},
+        {1, 0, 0, 3, 0, 0, 1},
+        {1, 1, 1, 1, 1, 1, 1}
+    };
+
+    private int[,] levelMap2 = {
         {1, 1, 1, 1, 1, 1, 1},
         {1, 4, 3, 0, 0, 0, 1},
         {1, 0, 2, 2, 3, 0, 1},
@@ -23,51 +32,75 @@ public class LevelGenerator : MonoBehaviour
         {1, 1, 1, 1, 1, 1, 1}
     };
 
-    public void GenerateLevel()
+    public void GenerateLevel(int LevelNumber)
     {
-        ClearLevel();
-        relocateCamera();
+        int[,] levelMap = GetLevelMap(LevelNumber);
+        Debug.Log($"Current level is {LevelNumber}");
+        relocateCamera(LevelNumber);
+
         for (int y = 0; y < levelMap.GetLength(0); y++)
         {
             for (int x = 0; x < levelMap.GetLength(1); x++)
             {
-                Vector2 position = new Vector2(x, -y); 
-                Instantiate(groundPrefab, position, Quaternion.identity).transform.position = new Vector3(x, -y, 1);
+                Vector2 position = new Vector2(x, -y);
+
+                if (levelMap[y, x] != -1)
+                {
+                    GameObject ground = Instantiate(groundPrefab, position, Quaternion.identity);
+                    ground.transform.position = new Vector3(x, -y, 1);
+                    instantiatedObjects.Add(ground);
+                }
+
                 if (levelMap[y, x] == 1) // Wall
                 {
-                    Instantiate(wallPrefab, position, Quaternion.identity);
+                    GameObject wall = Instantiate(wallPrefab, position, Quaternion.identity);
+                    instantiatedObjects.Add(wall);
                 }
                 else if (levelMap[y, x] == 2) // Box
                 {
-                    Instantiate(boxPrefab, position, Quaternion.identity);
+                    GameObject box = Instantiate(boxPrefab, position, Quaternion.identity);
+                    instantiatedObjects.Add(box);
                 }
                 else if (levelMap[y, x] == 3) // TargetPoint
                 {
-                    Instantiate(targetPrefab, position, Quaternion.identity);
+                    GameObject target = Instantiate(targetPrefab, position, Quaternion.identity);
+                    instantiatedObjects.Add(target);
                 }
                 else if (levelMap[y, x] == 4) // Player
                 {
-                    Instantiate(playerPrefab, position, Quaternion.identity);
+                    GameObject player = Instantiate(playerPrefab, position, Quaternion.identity);
+                    instantiatedObjects.Add(player);
                 }
             }
         }
     }
 
-    private Vector3 relocateCamera()
-    {
-        int mapHeight = levelMap.GetLength(0);
-        int mapWidth = levelMap.GetLength(1);
-        float centerX = (mapWidth - 1) / 2f;
-        float centerY = (mapHeight - 1) / 2f;
-        return Camera.main.transform.position = new Vector3(centerX, -centerY, -10);
-    }
-
-    private void ClearLevel()
+    public void ClearLevel()
     {
         foreach (GameObject obj in instantiatedObjects)
         {
             Destroy(obj);
         }
         instantiatedObjects.Clear();
+    }
+
+    private int[,] GetLevelMap(int levelNumber)
+    {
+        switch (levelNumber)
+        {
+            case 1: return levelMap1;
+            case 2: return levelMap2;
+            default: return null;
+        }
+    }
+
+    private Vector3 relocateCamera(int LevelNumber)
+    {
+        int[,] levelMap = GetLevelMap(LevelNumber);
+        int mapHeight = levelMap.GetLength(0);
+        int mapWidth = levelMap.GetLength(1);
+        float centerX = (mapWidth - 1) / 2f;
+        float centerY = (mapHeight - 1) / 2f;
+        return Camera.main.transform.position = new Vector3(centerX, -centerY, -10);
     }
 }

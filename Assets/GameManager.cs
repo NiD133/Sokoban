@@ -1,9 +1,9 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
     public LevelGenerator levelGenerator;
+    private int LevelNumber = 1;
 
     private void Start()
     {
@@ -14,25 +14,23 @@ public class GameManager : MonoBehaviour
     {
         if (AreAllBoxesOnTargets())
         {
-            ReloadLevel();
+            LevelNumber++;
+            levelGenerator.ClearLevel();
+            levelGenerator.GenerateLevel(LevelNumber);
+            
         }
     }
 
     public void StartLevel()
     {
         if (levelGenerator != null)
-        {
-            levelGenerator.GenerateLevel();
+        {   
+            levelGenerator.GenerateLevel(LevelNumber);
         }
         else
         {
             Debug.LogError("LevelGenerator not assigned!");
         }
-    }
-
-    private void ReloadLevel()
-    {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     private bool AreAllBoxesOnTargets()
