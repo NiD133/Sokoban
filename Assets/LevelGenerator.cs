@@ -13,17 +13,6 @@ public class LevelGenerator : MonoBehaviour
     private List<GameObject> instantiatedObjects = new List<GameObject>();
 
     private int[,] levelMap1 = {
-        {1, 1, 1, -1, -1, -1, -1},
-        {1, 0, 1, -1, -1, -1, -1},
-        {1, 4, 1, -1, -1, -1, -1},
-        {1, 0, 1, -1, -1, -1, -1},
-        {1, 2, 1, -1, -1, -1, -1},
-        {1, 0, 1, 1, 1, 1, 1},
-        {1, 0, 0, 3, 0, 0, 1},
-        {1, 1, 1, 1, 1, 1, 1}
-    };
-
-    private int[,] levelMap2 = {
         {1, 1, 1, 1, 1, 1, 1},
         {1, 4, 3, 0, 0, 0, 1},
         {1, 0, 2, 2, 3, 0, 1},
@@ -34,9 +23,9 @@ public class LevelGenerator : MonoBehaviour
 
     public void GenerateLevel(int LevelNumber)
     {
-        int[,] levelMap = GetLevelMap(LevelNumber);
+        int[,] levelMap = levelMap1;
         Debug.Log($"Current level is {LevelNumber}");
-        relocateCamera(LevelNumber);
+        relocateCamera();
 
         for (int y = 0; y < levelMap.GetLength(0); y++)
         {
@@ -84,21 +73,10 @@ public class LevelGenerator : MonoBehaviour
         instantiatedObjects.Clear();
     }
 
-    private int[,] GetLevelMap(int levelNumber)
+    private Vector3 relocateCamera()
     {
-        switch (levelNumber)
-        {
-            case 1: return levelMap1;
-            case 2: return levelMap2;
-            default: return null;
-        }
-    }
-
-    private Vector3 relocateCamera(int LevelNumber)
-    {
-        int[,] levelMap = GetLevelMap(LevelNumber);
-        int mapHeight = levelMap.GetLength(0);
-        int mapWidth = levelMap.GetLength(1);
+        int mapHeight = levelMap1.GetLength(0);
+        int mapWidth = levelMap1.GetLength(1);
         float centerX = (mapWidth - 1) / 2f;
         float centerY = (mapHeight - 1) / 2f;
         return Camera.main.transform.position = new Vector3(centerX, -centerY, -10);
