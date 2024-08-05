@@ -14,23 +14,40 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
+        {
             moveDir = Vector2.right;
+            Debug.Log("Move Right");
+        }
 
         if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
+        {
             moveDir = Vector2.left;
+            Debug.Log("Move Left");
+        }
 
         if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
+        {
             moveDir = Vector2.up;
+            Debug.Log("Move Up");
+        }
 
         if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
+        {
             moveDir = Vector2.down;
+            Debug.Log("Move Down");
+        }
 
         if (Input.GetKeyDown(KeyCode.Q))
+        {
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            Debug.Log("Restart Level");
+        }
 
         if (Input.GetKeyDown(KeyCode.P))
+        {
             UndoMove();
-
+            Debug.Log("Undo Move");
+        }
 
         if (moveDir != Vector2.zero)
         {
@@ -41,8 +58,9 @@ public class PlayerController : MonoBehaviour
                 directionStack.Push(moveDir);
             }
         }
-        moveDir= Vector2.zero;
+        moveDir = Vector2.zero;
     }
+
 
     bool CanMoveToDir(Vector2 dir)
     {
@@ -92,8 +110,6 @@ public class PlayerController : MonoBehaviour
                         hit.collider.transform.Translate(-moveDirection);
                     }
                 }
-
-
             }
             transform.Translate(-moveDirection);
         }
